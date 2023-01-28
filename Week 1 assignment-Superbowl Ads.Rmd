@@ -1,0 +1,53 @@
+---
+title: "DATA 607 Week 1"
+author: "Nick"
+date: "2023-01-28"
+---
+https://projects.fivethirtyeight.com/super-bowl-ads/
+
+###Overview: Fivethirtyeight categorized superbowl commercials from top 10 brands and looked at common groupings of categories (i.e. commercials that were, for example, both funny and patriotic etc...). The article focused combinations of characteristics which they found interesting, but the article did not discuss overall most common types of advertisements. A subset of the full data will be extracted and tallied to provide an illustration of most common characteristics.
+
+
+##Step 1: Load tidyverse and pull data from fivethirtyeight as data frame from github and confirm data class.
+``` {r echo = FALSE}
+library(tidyverse)
+super_bowl_ads <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/superbowl-ads/main/superbowl-ads.csv")
+print(class(super_bowl_ads))
+```
+##Step 2: Create subset of initial data to include only ad category and year of release then print dataframe to verify. Year was left in this subset as it can be used to provide insight to how advertisements may have changed over time.
+```{r}
+ad_by_category <- select(super_bowl_ads,-c(brand,youtube_url,superbowl_ads_dot_com_url))
+ad_by_category
+```
+##step 3: Extract a subset which includes each ad category and create a dataframe with the total number of ads in each category
+```{r}
+sum_table <- sapply(ad_by_category[1:8],table)
+#class(sum_table)
+#sum_table
+new_df <- data.frame(matrix(ncol=0,nrow=1))
+for(i in 2:8){
+  new_df <- add_column(new_df,sum_table[[i]][2],.name_repair="minimal")
+  colnames(new_df)[i-1]<-c(colnames(ad_by_category[i]))
+}
+new_df
+```
+### Step 4: Add row to initial subset which provides a tally of total number of ads in each category. Add a 2nd row showing category as a relative portion of total ads. Then print last 2 rows
+```{r}
+
+final_df<-ad_by_category%>%add_row(funny=as.character(new_df[[1]]),show_product_quickly=as.character(new_df[[2]]),patriotic=as.character(new_df[[3]]),celebrity=as.character(new_df[[4]]),danger=as.character(new_df[[5]]),animals=as.character(new_df[[6]]),use_sex=as.character(new_df[[7]]))
+
+final_df<-final_df%>%add_row(funny=as.character(signif(new_df[[1]]/244,2)),show_product_quickly=as.character(signif(new_df[[2]]/244,2)),patriotic=as.character(signif(new_df[[3]]/244,2)),celebrity=as.character(signif(new_df[[4]]/244,2)),danger=as.character(signif(new_df[[5]]/244,2)),animals=as.character(signif(new_df[[6]]/244,2)),use_sex=as.character(signif(new_df[[7]]/244,2)))
+tail(final_df,n=2)
+```
+### Step 5: Summary of type of advertisements shown during superbowl
+```{r}
+percent_of_ads<-c(69,68,17,28,31,36,26)
+types_of_ads<-c("Funny","Shows Product Quickly","Patriotic","Celebrity","Danger","Animals","Uses Sex")
+
+graph_df<-data.frame(percent = c(percent_of_ads),
+                     type=c(types_of_ads))
+
+ggplot(graph_df, mapping=aes(x=percent, y=type)) + 
+  geom_bar(stat = "identity") + ggtitle("Types of Ads shown During Superbowl") + xlab("Percentage of Total Ads")+ylab("Type of Ad")
+```
+### Conclusion and future direction: Based on this dataset, advertisements most commonly intended to be funny and only showed the product quickly. Further work could include tracking types of advertisements over time
