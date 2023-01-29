@@ -1,15 +1,17 @@
 ---
 title: "DATA 607 Week 1"
 author: "Nick"
-date: "2023-01-28"
 ---
 https://projects.fivethirtyeight.com/super-bowl-ads/
+
+https://raw.githubusercontent.com/fivethirtyeight/superbowl-ads/main/superbowl-ads.csv
+
 
 ###Overview: Fivethirtyeight categorized superbowl commercials from top 10 brands and looked at common groupings of categories (i.e. commercials that were, for example, both funny and patriotic etc...). The article focused combinations of characteristics which they found interesting, but the article did not discuss overall most common types of advertisements. A subset of the full data will be extracted and tallied to provide an illustration of most common characteristics.
 
 
 ##Step 1: Load tidyverse and pull data from fivethirtyeight as data frame from github and confirm data class.
-``` {r echo = FALSE}
+``` {r}
 library(tidyverse)
 super_bowl_ads <- read.csv("https://raw.githubusercontent.com/fivethirtyeight/superbowl-ads/main/superbowl-ads.csv")
 print(class(super_bowl_ads))
@@ -50,4 +52,6 @@ graph_df<-data.frame(percent = c(percent_of_ads),
 ggplot(graph_df, mapping=aes(x=percent, y=type)) + 
   geom_bar(stat = "identity") + ggtitle("Types of Ads shown During Superbowl") + xlab("Percentage of Total Ads")+ylab("Type of Ad")
 ```
-### Conclusion and future direction: Based on this dataset, advertisements most commonly intended to be funny and only showed the product quickly. Further work could include tracking types of advertisements over time
+
+
+### Conclusion and future direction: Based on this dataset, advertisements most commonly intended to be funny and only showed the product quickly. Further work could include tracking types of advertisements over time.
